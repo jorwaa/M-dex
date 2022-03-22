@@ -1,0 +1,22 @@
+{
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node index.js",
+        "build-client": "npm run build --prefix client"
+
+    },
+    "version": "1.0.0",
+    "author": "Jøran Wigen",
+    "description": "Doing something with the Mangadex API",
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "dependencies": {
+        "axios": "^0.26.1",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.0",
+        "express": "^4.17.3"
+    }
+}

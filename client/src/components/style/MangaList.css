@@ -1,0 +1,20 @@
+.MangaElements-root {
+    display: flex;
+    flex-direction: row;  
+    flex-wrap: wrap;  
+}
+
+.MangaEl {
+    height: 200px;
+    margin-bottom: 10px;
+    width: 50%;
+    border-bottom: solid #38364b;
+}
+
+@media only screen and (max-width: 670px) {
+    .MangaEl {
+        height: auto;
+        width: 100%;
+        float: none;
+    }
+}

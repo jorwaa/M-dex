@@ -1,0 +1,62 @@
+a {
+    text-decoration: none;
+}
+
+.mangaDiv {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    transition: display 0.5s;
+}
+
+.mangaImgLink {
+    height: 100%;
+}
+
+.mangaDetails {
+    max-width: 75%;
+    margin-left: 8px;
+    display: flex;
+    flex-direction: column;
+    font-family: Trebuchet MS;
+}
+.mangaImgWrapper {
+    height: 100%;
+    width: fit-content;
+    border-radius: 50% 20% / 10% 40%;
+}
+.mangaImg {
+    height: auto;
+    max-width: 125px;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+.mangaTitle {
+    margin-left: 3px;
+    color: white;
+}
+
+.mangaDescription {
+    color: #999;
+}
+
+.MangaList-navBar {
+    width:100%;
+    display: flex;
+}
+
+.back {
+    margin-left: auto;
+    margin-right: 5px;
+    background: none;
+    border: 0;
+}
+
+.forward {
+    margin-left: 5px;
+    background: none;
+    border: 0;
+}
+
