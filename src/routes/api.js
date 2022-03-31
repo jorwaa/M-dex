@@ -1,9 +1,19 @@
 var rawData = require("./TestMangaInfo").mangaData
+const login = require('./../handlers/auth').login
+const checkToken = require( './../handlers/auth').checkToken
+const refreshSession = require('./../handlers/auth').refreshSession
 
 const axios = require('axios')
 const path = require("path");
 const express = require('express');
 const router = express.Router();
+
+
+router.post('/login', express.json(), login);
+
+router.post('/refresh', express.json(), refreshSession)
+
+router.get('/auth/:token', checkToken);
 
 /**
  * the '/manga' API retrieves a list of manga elements 
@@ -43,6 +53,36 @@ router.get('/mangas', (req, res) => {
     console.log(`${baseURL}${queryParams}`);
     axios.get(`${baseURL}${queryParams}`)
     .then(response => { generateRequest(response.data, res)});
+})
+
+router.get('/userlist', (req, res) => {
+    console.log("IN /USERLIST ENDPOiNT");
+    const offset = req.query.offset;
+    const limit = req.query.limit;
+    const localBaseUrl = '/api/userlist';
+    const fullUrl = req.originalUrl;
+    console.log(`base: ${localBaseUrl} full: ${fullUrl}`);
+    const queryParams = (fullUrl.substring(localBaseUrl.length))
+    console.log("queryParams: "+ queryParams);
+    console.log(`Fetching ${limit} elements with and offset of ${offset}.`);
+    console.log("Url:");
+    const baseURL = 'https://api.mangadex.org/user/follows/manga/feed'
+    let mangaURI = `manga?limit=${limit}&offset=${offset}&availableTranslatedLanguage[]=en&order[latestUploadedChapter]=desc`
+    console.log(`${baseURL}${queryParams}`);
+    //console.log(JSON.stringify(req.headers));
+    const config = {
+        headers: {
+            'Authorization': req.headers.authorization
+        }
+    }
+
+    axios.get(`${baseURL}${queryParams}`, config)
+    .then(response => { generateRequest(response.data, res)})
+    .catch(err =>  {
+        console.log("Error!");
+        console.log(err);
+        res.status(400).json(err)
+    } );
 })
 
 /**
@@ -120,6 +160,7 @@ function generateRequest(mangaData, res) {
         covers: [],
     }
     mangaData.data.forEach(el => {
+        console.log(el);
         sortedData.titles.push({
             'val': (el.attributes.title.en ? el.attributes.title.en : Object.values(el.attributes.altTitles[0])[0]),
             'mangaId': el.id

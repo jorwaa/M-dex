@@ -73,7 +73,26 @@ class MangaList extends React.Component {
         let listQuery = this.paramsToQuery()
         //fetch(`/api/mangas?offset=${this.state.offset}&limit=${this.state.limit}`)
         console.log("URL: " + listQuery);
-        fetch(listQuery)
+        var config = {};
+        if (this.props.isAuthenticated) {
+            var bearer
+            const sessionCookie = document.cookie
+            .split('; ')
+            .find(el => el.startsWith('sessionId='))
+            if (sessionCookie == null) {
+                console.log("session token cookie not found");
+                //GOTO /user & log in
+            }else {
+                console.log("session token cookie found");
+                bearer = sessionCookie.split('=')[1];
+            }
+
+            config = {
+                headers: {Authorization: `Bearer ${bearer}`}
+            }
+        }
+
+        fetch(listQuery, config)
         .then(res => res.json())
         .then(data => {
             this.setState({ mangas: data });
@@ -92,7 +111,8 @@ class MangaList extends React.Component {
      * @returns a String representation of this.state.queryParams 
      */
     paramsToQuery() {
-        const URI =  '/api/mangas?';
+        //const URI =  '/api/mangas?';
+        const URI = this.props.endpoint;
         var queryParams = "";
         Object.entries(this.state.queryParams).map(entry => {
             const [key, item] = entry;
@@ -196,7 +216,7 @@ class MangaList extends React.Component {
                 </div>
                 <div className='MangaList-navBar'>
                     <button onClick={this._prevPage} className='back'>
-                    <FontAwesomeIcon icon={'arrow-left'} scale={'4x'}></FontAwesomeIcon>
+                    <FontAwesomeIcon icon={'arrow-left'} size={'3x'}></FontAwesomeIcon>
                     </button>
                     <div className='MangaList-pages'>
                         <p>
@@ -204,7 +224,7 @@ class MangaList extends React.Component {
                         </p>
                     </div>
                     <button onClick={this._nextPage} className='forward'>
-                    <FontAwesomeIcon icon={'arrow-right'} scale={'4x'}></FontAwesomeIcon>
+                    <FontAwesomeIcon icon={'arrow-right'} size={'3x'}></FontAwesomeIcon>
                     </button>
                 </div>
             </div>

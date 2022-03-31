@@ -1,0 +1,73 @@
+.loginDiv {
+    width: 100%;
+    display: flex;
+    background-color: #121318;
+    justify-content: center;
+}
+
+.loginForm {
+    width: 40%;
+}
+
+.loginForm > label {
+    color: white;
+    padding-left: 0;
+}
+
+
+
+.inputDiv > label {
+    color: white;
+    position: relative;
+    top: 25px;
+    left: 10px;
+    font-size: 0.75rem;
+
+}
+
+#usernameInp {
+    width: 100%;
+    margin: 5px;
+    padding-top: 36px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    font-size: 20px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    text-justify: kashida;
+    border: none;
+    color: white;
+    background-color: #282c34;
+}
+
+#passwordInp {
+    width: 100%;
+    margin: 5px;
+    padding-top: 36px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    font-size: 20px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    border: none;
+    color: white;
+    background-color: #282c34;
+}
+
+#loginSubmit {
+    width: 100%;
+    height: 50px;
+    margin-left: 7.5px;
+    margin-top: 8px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    background-color: coral;
+    font-size: 22px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    cursor: pointer;
+    transform: all 5s;
+}
+
+#loginSubmit:active {
+    scale: 0.99;
+    background-color: rgb(207, 104, 67);
+}

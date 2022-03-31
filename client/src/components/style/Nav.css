@@ -8,10 +8,13 @@
     margin: 0 auto;
 }
 .HomeDiv {
-    margin-right: auto;
-    margin-top: auto;
-    margin-bottom: auto;
-    padding-left: 50px;
+    margin: auto;
+    padding-left: 25px;
+}
+
+.userDiv {
+    margin: auto;
+    padding-left: 25px;
 }
 
 .searchDiv {
@@ -71,6 +74,9 @@
 @media only screen and (max-width: 800px) {
     .HomeDiv {
         display: none;
+    }
+    .userDiv {
+        padding-left: 0;
     }
     .SettingsDiv {
         display: none;

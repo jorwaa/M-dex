@@ -2,25 +2,43 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Link } from "react-router-dom";
+
+
 import Nav from './components/Nav'
 import MangaList from './components/MangaList'
+import User from './components/User'
 
-import defaultParameters from './components/defaultParameters'; './components/defaultParameters'
+import defaultParameters from './components/defaultParameters';
 
 ReactDOM.render(
+  <BrowserRouter>
   <React.StrictMode>
     <div className='nav-div'>
       <Nav />
     </div>
     <div className='content'>
-      <div className="latest">
-        <h1>Recently updated mangas</h1>
+    <Routes>
+      <Route path='/'
+        element={
+          <MangaList
+            endpoint={defaultParameters.mangas.endpoint}
+            queryParams={defaultParameters.mangas.latest}
+          />
+        } />
+      <Route path='/user' element={<User />} />
+      <Route path='settings' element={
         <MangaList
-          queryParams={defaultParameters.mangas.latest}
-          /> 
-      </div>
+            endpoint={defaultParameters.mangas.endpoint}
+            isAuthenticated={defaultParameters.mangas.isAuthenticated}
+            queryParams={defaultParameters.mangas.latest}
+          />
+      } />
+    </Routes>
     </div>
-  </React.StrictMode>,
+  </React.StrictMode>
+    </BrowserRouter>,
   document.getElementById('root')
 );
 

@@ -132,3 +132,6 @@ dist
 # local config files
 src/config/config.js
 src/config/*.config.js
+
+# React build files
+build/
