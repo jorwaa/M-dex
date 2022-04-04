@@ -36,6 +36,15 @@ ReactDOM.render(
           />
       } />
     </Routes>
+    <div id='footer'>
+    <div id='footerDisclaimer'>
+      <p>Data fetched from <a href='https://api.mangadex.org/docs.html'>MangaDex</a></p>
+      <p>All credit and rights go to <a href='https://www.mangadex.org'>MangaDex</a> and the related scanlation groups</p>
+      </div>
+      <div id='footerMe'>
+        <p>Website created by <a href='https://www.github.com/jorwaa'>Jøran Wigen Aasterud</a></p>
+      </div>
+    </div>
     </div>
   </React.StrictMode>
     </BrowserRouter>,

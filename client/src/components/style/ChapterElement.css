@@ -4,7 +4,7 @@ a {
 
 .mangaDiv {
     height: 100%;
-    width: 100%;
+    min-width: 100%;
     display: flex;
     flex-direction: row;
     transition: display 0.5s;
@@ -15,7 +15,8 @@ a {
 }
 
 .mangaDetails {
-    max-width: 75%;
+    width: 75%;
+    height: 100%;
     margin-left: 8px;
     display: flex;
     flex-direction: column;
@@ -27,8 +28,8 @@ a {
     border-radius: 50% 20% / 10% 40%;
 }
 .mangaImg {
-    height: 200px;
-    max-width: 125px;
+    height: auto;
+    max-width: 65px;
     object-fit: cover;
     overflow: hidden;
 }
@@ -36,15 +37,18 @@ a {
 .mangaTitle {
     margin-left: 3px;
     color: white;
-    transition: color 0.7s;
+    font-size: 22px;
+    margin-top: 0;
 }
 
-.mangaDiv:hover  .mangaTitle {
-    color: #9b51e0;
+.chapters {
+    min-width: 100%;
+    margin-top: 0;
+    color: white;
 }
-
-.mangaDescription {
-    color: #999;
+.chapters > p {
+    margin-left: 5px;
+    margin-top: 0;
 }
 
 .MangaList-navBar {

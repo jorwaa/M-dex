@@ -1,4 +1,4 @@
-import './style/MangaList.css';
+import './style/ChapterList.css';
 
 import React from "react";
 
@@ -6,20 +6,29 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
-import MangaElement from "./MangaElement";
+import ChapterElement from "./ChapterElement";
 
 /**
  * A generic List element that given the response of a
  * '/api/mangas' API call, displays the response data as 
  * a list of 'MangaElement'-objects
  */
-class MangaList extends React.Component {
+class ChapterList extends React.Component {
     constructor(props) {
         super(props);
         library.add(faArrowLeft);
         library.add(faArrowRight);
 
         this.state = {
+            isAuthenticated: false,
+            limit: 0,
+            offset: 0,
+            total: 0,
+            chapters: {
+                result: "ok",
+                errors: [],
+                data: [],
+            },
             mangas: {
                 result: "ok",
                 limit: 0,
@@ -28,13 +37,15 @@ class MangaList extends React.Component {
                 errors: [],
                 data: [],
             },
+            listElements: [],
+            mangaLoaded: false,
             queryParams: this.props.queryParams,
         }
 
         this.setQueryParams = this.setQueryParams.bind(this);
         this.updateQueryParams = this.updateQueryParams.bind(this);
 
-        this.fetchMangaList = this.fetchMangaList.bind(this);
+        this.fetchChapterList = this.fetchChapterList.bind(this);
         this.paramsToQuery = this.paramsToQuery.bind(this);
         this.parseArrayParam = this.parseArrayParam.bind(this);
         this.parseObjectParam = this.parseObjectParam.bind(this);
@@ -60,7 +71,7 @@ class MangaList extends React.Component {
 
         this.setState({
             queryParams: queryParams
-        }, this.fetchMangaList())
+        }, this.fetchChapterList())
     }
 
     /**
@@ -68,7 +79,7 @@ class MangaList extends React.Component {
      * and when a response is given, parses the response body
      * to the 'MangaList' element's state
      */
-    fetchMangaList() {
+    fetchChapterList() {
         console.log("Fetching latest mangas...");
         let listQuery = this.paramsToQuery()
         //fetch(`/api/mangas?offset=${this.state.offset}&limit=${this.state.limit}`)
@@ -81,7 +92,8 @@ class MangaList extends React.Component {
             .find(el => el.startsWith('sessionId='))
             if (sessionCookie == null) {
                 console.log("session token cookie not found");
-                //GOTO /user & log in
+                location.reload(false);
+                return;
             }else {
                 console.log("session token cookie found");
                 bearer = sessionCookie.split('=')[1];
@@ -95,14 +107,93 @@ class MangaList extends React.Component {
         fetch(listQuery, config)
         .then(res => res.json())
         .then(data => {
-            this.setState({ mangas: data });
-            if (data.result != 'ok') {
-                console.log("Errors:");
-                console.log(data.errors);
-                alert(data.errors);
+            //this.setState({ chapters: data }, () => {
+                if (data.result != 'ok') {
+                    console.log("Errors:");
+                    console.log(data.errors);
+                    alert(data.errors);
+                }
+                // Update limit and offset used in page display
+                this.setState({
+                    limit: data.limit,
+                    offset: data.offset,
+                    total: data.total,
+                })
+                console.log(this.state.limit);
+                //Create ChapterElements:
+                var listElements = [];
+                let chapters = data.data
+                for (let i = 0, j = 0; i < chapters.length; i++) {
+                    let mangaId = this.getRelationships(chapters[i], 'manga')[0];
+                    let listElementChapter = {
+                        mangaId: mangaId,
+                        chapterId: chapters[i].chapterId,
+                        volume: chapters[i].attributes.volume,
+                        chapter: chapters[i].attributes.chapter, 
+                        title: chapters[i].attributes.title,
+                    }
+                    if (j == 0 || (listElements[j-1].mangaId != mangaId)) {
+                        let listElement = {
+                            mangaId: mangaId,
+                            chapters: [listElementChapter],
+                        }
+                        listElements.push(listElement);
+                        j++;
+                    }else {
+                        listElements[j-1].chapters = listElements[j-1].chapters.concat(listElementChapter);// = ((listElements[j-1].chapters).push(listElementChapter))
+                    }
+                }
+                this.fetchRelatedMangas(listElements);
+        });
+    }
+
+    fetchRelatedMangas(listElements) {
+        //get manga IDs:
+        var mangaIds = []
+        for (let i = 0; i < listElements.length; i++) {
+            let mangaId =  listElements[i].mangaId;
+            mangaIds.push(mangaId);
+        }
+
+        var args = '?includes[]=cover_art';
+        for (let i = 0; i < mangaIds.length; i++) {
+            args += `&ids[]=${mangaIds[i]}`;
+        }
+        fetch(`/api/mangas${args}`)
+        .then(response => response.json())
+        .then(data => {
+            let mangas = data.data;
+            for (let i = 0; i < listElements.length; i++) {
+                //let ind = listElements.findIndex(el => el[mangaId] == mangas[i].mangaId);
+                for (let j = 0; j < mangas.length; j++) {
+                    if (listElements[i].mangaId == mangas[j].id) {
+                        listElements[i] = {
+                            ...listElements[i],
+                            manga: {
+                                ...mangas[j]
+                            },
+                        }
+                        break;
+                    }
+                }
             }
-            console.log(this.state.mangas);
+            const newListElements = listElements;
+            this.setState({
+                listElements: newListElements,
+                mangaLoaded: true,
+            });
         })
+    }
+
+    getRelationships(obj, type) {
+        var relationshipIds = [];
+        let i = 0;
+        for (i; i < obj.relationships.length; i++) {
+            if (obj.relationships[i].type == type) {
+                relationshipIds.push(obj.relationships[i].id);
+            }
+        }
+        return relationshipIds;
     }
 
     /**
@@ -116,7 +207,6 @@ class MangaList extends React.Component {
         var queryParams = "";
         Object.entries(this.state.queryParams).map(entry => {
             const [key, item] = entry;
-            console.log("--"+entry+"--");
             if (item == null) {
                 // ignore unset parameters....
             } else if (item.constructor == Array) {
@@ -168,7 +258,6 @@ class MangaList extends React.Component {
     _nextPage() {
         let newParams = this.state.queryParams;
         newParams.offset = (newParams.offset + newParams.limit);
-        console.log("New offset: " + newParams.offset);
         this.updateQueryParams(newParams)
 
     }
@@ -194,15 +283,13 @@ class MangaList extends React.Component {
     updateQueryParams(newParams) {
         this.setState({
             queryParams: newParams
-        }, this.fetchMangaList())
+        }, this.fetchChapterList())
     }
 
     render() {
-        if (this.state.mangas.data == null) {
+        if (this.state.chapters.data == null) {
             return (
             <div className='MangaList-root'>
-            <div className='MangaList-header'>
-            </div>
                 <div className='MangaElements-root'>
                    <h2>List is empty!</h2>
                 </div>
@@ -211,17 +298,18 @@ class MangaList extends React.Component {
         }
         return (
             <div className="MangaList-root">
-                <div className='MangaList-header'>
-                <h5>Read manga online</h5>
-                </div>
+            <div className='MangaList-header'>
+                <h5>Recent updates</h5>
+            </div>
                 <div className='MangaElements-root'>
-                    {this.state.mangas.data.map((e, i) => { return (
-                        <div className='MangaEl' key={i}>
-                            <MangaElement 
-                                manga={e}
+                    {this.state.listElements.map((e, i) => { return (
+                        <div className='MangaEl' key={`${e.mangaId}-${i}`}>
+                            <ChapterElement 
+                                chapters={e.chapters}
+                                manga={e.manga}
+                                mangaLoaded={this.state.mangaLoaded}
                             /> 
-                        </div>
-                        )})
+                        </div>)})
                     }
                 </div>
                 <div className='MangaList-navBar'>
@@ -230,7 +318,7 @@ class MangaList extends React.Component {
                     </button>
                     <div className='MangaList-pages'>
                         <p>
-                        {Math.ceil(this.state.mangas.offset / this.state.mangas.limit)+1} / {Math.ceil(this.state.mangas.total / this.state.mangas.limit)+1}
+                        {Math.ceil(this.state.offset / this.state.limit)+1} / {Math.ceil(this.state.total / this.state.limit)+1}
                         </p>
                     </div>
                     <button onClick={this._nextPage} className='forward'>
@@ -252,4 +340,4 @@ class MangaList extends React.Component {
     }
 } 
 
-export default MangaList
+export default ChapterList

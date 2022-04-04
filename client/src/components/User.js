@@ -3,7 +3,7 @@ import React from "react";
 
 
 import defaultParameters from './defaultParameters';
-import MangaList from './MangaList'
+import ChapterList from './ChapterList'
 import Login from './Login'
 
 class User extends React.Component {
@@ -21,12 +21,15 @@ class User extends React.Component {
     }
 
     render() {
-        const isAuthenticated = (this.checkSession() || this.checkRefreshToken())
+        const isAuthenticated = this.checkSession();
+        if (!isAuthenticated)
+            this.checkRefreshToken();
+
+        console.log("Render() <- User component");
         if (isAuthenticated) {
             return (
             <div className="userContent">
-                <h2> Liste dukker opp her~ </h2>
-                <MangaList 
+                <ChapterList 
                     endpoint={defaultParameters.user.endpoint}
                     isAuthenticated={defaultParameters.user.isAuthenticated}
                     queryParams={defaultParameters.user.latest}
@@ -36,7 +39,6 @@ class User extends React.Component {
         }else {
             return (
                 <div className="userContent">
-                    <h2> Logg inn her~ </h2>
                     <Login 
                         setToken={(token => this.setState({'token': token}))}
                         tokenGenerated={(t) => this.setState({lastRefresh: t})}

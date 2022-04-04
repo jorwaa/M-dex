@@ -1,5 +1,5 @@
 body {
-  background-color: rgb(12, 12, 12);
+  background-color: #000;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -22,6 +22,34 @@ code {
   margin: 0 auto;
 }
 
-.latest {
+#footer {
+  border-top: solid 4px #000;
+  width: 100%;
+  color: white;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
 
+#footer a {
+  text-decoration: wavy;
+  text-shadow: 1px 0px #000;
+  color: blanchedalmond;
+}
+
+#footerDisclaimer {
+  text-decoration: none;
+  text-align: center;
+  width: 100%;
+  line-height: 0.8rem;
+  margin-left: 5px;
+}
+
+#footerMe {
+  display: flex;
+  -ms-flex-align: right;
+  justify-content: right;
+  text-align: right;
+  margin-bottom: 0;
+  width: 100%;
 }

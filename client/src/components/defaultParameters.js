@@ -27,7 +27,9 @@ export default {
             'order': {
               'latestUploadedChapter': 'desc',
             },
-            'includes': null,
+            'includes': [
+              'cover_art'
+            ],
             'hasAvailableChapters': 1,
             'group': null,
         }
@@ -56,7 +58,9 @@ export default {
         'order': {
           'updatedAt': 'desc'
         },
-        'includes': null
+        'includes': [
+          'cover_art'
+        ]
       }
     }
 }

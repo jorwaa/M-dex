@@ -8,27 +8,39 @@ class MangaElement extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            displayedDescription: (this.props.description ? (this.props.description).slice(0,150)+"..." : "..."),
-            displayedTitle: ((this.props.title).slice(0,30)+"...")
+            displayedDescription: (this.props.manga.attributes.description ? (this.props.manga.attributes.description.en).slice(0,150)+"..." : "..."),
+            displayedTitle: ((this.props.manga.attributes.title.en).slice(0,30)+"...")
         }
     }
 
+    getRelationships(obj, type) {
+        var relationships = []
+        for (let i = 0; i < obj.relationships.length; i++) {
+            if (obj.relationships[i].type == type)
+                relationships.push(obj.relationships[i]);
+        }
+        return (relationships.length > 0 ? relationships : [null]);
+    }
+
     render() {
+        var coverURL = ""
+        var coverRelationship = this.getRelationships(this.props.manga, 'cover_art')[0];
+        if (coverRelationship != null) {    
+            coverURL = `https://uploads.mangadex.org/covers/${this.props.manga.id}/${coverRelationship.attributes.fileName}`
+        }
         return (
-            <div className="mangaDiv">
-            <a className="mangaImgLink" href={`/manga/${this.props.mangaId}`}>
-            <LazyLoad className="mangaImgWrapper"
-                height={'100%'}>
-                        <img className="mangaImg" src={`${this.props.coverURL}.256.jpg`} alt={this.props.title} />
-                </LazyLoad>
-                </a>
-                <div className="mangaDetails">
-                    <a href={`/manga/${this.props.mangaId}`}>
-                        <h3 className="mangaTitle"> {this.props.title} </h3>
-                    </a>
-                    <p className="mangaDescription"> {this.state.displayedDescription} </p>
+            <a className="mangaLink" href={`/manga/${this.props.manga.id}`}>
+                <div className="mangaDiv">
+                <LazyLoad className="mangaImgWrapper"
+                    height={'100%'}>
+                            <img className="mangaImg" src={`${coverURL}.256.jpg`} alt={this.props.manga.attributes.title.en} />
+                    </LazyLoad>
+                    <div className="mangaDetails">
+                            <h3 className="mangaTitle"> {this.props.manga.attributes.title.en} </h3>
+                        <p className="mangaDescription"> {this.state.displayedDescription} </p>
+                    </div>
                 </div>
-            </div>
+            </a>
         )
     }
 }
